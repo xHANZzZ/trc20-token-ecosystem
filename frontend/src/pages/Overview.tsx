@@ -18,7 +18,7 @@ export const Overview: React.FC = () => {
       {/* Network Alert */}
       {!isConnected && (
         <div className="bg-crimsonRed/10 border border-crimsonRed/20 rounded-xl p-4 flex items-center justify-between">
-          <p class="text-xs text-crimsonRed font-medium">
+          <p className="text-xs text-crimsonRed font-medium">
             ⚠️ TronLink wallet disconnected. Overview display is showing mock cache records.
           </p>
         </div>
@@ -49,8 +49,8 @@ export const Overview: React.FC = () => {
       {/* Transaction Activity Chart Mock */}
       <div className="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass space-y-4">
         <div>
-          <h3 class="text-sm font-bold text-pureWhite tracking-tight">Real-Time Transaction Activity</h3>
-          <p class="text-[10px] text-mutedGray mt-0.5">Ecosystem transaction throughput trend (last 7 blocks)</p>
+          <h3 className="text-sm font-bold text-pureWhite tracking-tight">Real-Time Transaction Activity</h3>
+          <p className="text-[10px] text-mutedGray mt-0.5">Ecosystem transaction throughput trend (last 7 blocks)</p>
         </div>
 
         {/* SVG-drawn Vector Chart */}
@@ -103,7 +103,7 @@ export const Overview: React.FC = () => {
 
       {/* Quick Actions Panel */}
       <div className="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass space-y-4">
-        <h3 class="text-sm font-bold text-pureWhite tracking-tight">Compliance Audit Auditing Console</h3>
+        <h3 className="text-sm font-bold text-pureWhite tracking-tight">Compliance Audit Auditing Console</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-sans text-xs">
           <div className="bg-obsidian border border-spaceBorder p-4 rounded-xl space-y-1">
             <span className="text-[10px] font-bold text-tealAccent uppercase">Network Endpoint</span>
