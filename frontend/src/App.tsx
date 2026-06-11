@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { TronLinkProvider } from './context/TronLinkContext.js';
-import { Layout } from './components/Layout.js';
-import { Overview } from './pages/Overview.js';
-import { Transfers } from './pages/Transfers.js';
-import { Registry } from './pages/Registry.js';
-import { Settings } from './pages/Settings.js';
+import { useState } from 'react';
+import { TronLinkProvider } from './context/TronLinkContext';
+import { Layout } from './components/Layout';
+import { Overview } from './pages/Overview';
+import { Transfers } from './pages/Transfers';
+import { Registry } from './pages/Registry';
+import { Settings } from './pages/Settings';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('overview');
 
-  // Router dispatcher based on menu selections
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
