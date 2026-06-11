@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRC20 Admin Dashboard UI/UX Design System Specification</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#0B0F19',
+            slateCard: '#161B26',
+            tealAccent: '#00F5D4',
+            crimsonRed: '#FF3B30',
+            pureWhite: '#FFFFFF',
+            mutedGray: '#94A3B8',
+            spaceBorder: 'rgba(255, 255, 255, 0.05)',
+            spaceAccent: '#1F293D',
+          },
+          boxShadow: {
+            'teal-glow': '0 0 15px rgba(0, 245, 212, 0.25)',
+            'red-glow': '0 0 15px rgba(255, 59, 48, 0.25)',
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Styling helpers */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0F19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1F293D;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00F5D4;
+    }
+    code {
+      font-size: 11px !important;
+    }
+  </style>
+</head>
+<body class="bg-obsidian text-pureWhite min-h-screen font-sans antialiased pb-32">
+
+  <!-- Floating Toast Notification Wrapper -->
+  <div id="toastWrapper" class="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none"></div>
+
+  <!-- Style Guide Header -->
+  <header class="bg-slateCard border-b border-spaceBorder py-10 px-8 sticky top-0 backdrop-blur-md z-40 shadow-glass">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-tealAccent text-obsidian text-xs px-2.5 py-0.5 rounded font-black tracking-widest">UI/UX SPEC</span>
+          <span class="text-xs text-mutedGray font-mono">LIVING STYLE GUIDE</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-pureWhite mt-2 tracking-tight">TRC20 Token Ecosystem Design System</h1>
+        <p class="text-mutedGray text-sm mt-1">Production-ready design tokens, component interaction matrix, and prototype layout.</p>
+      </div>
+
+      <!-- Quick Section Navigation -->
+      <nav class="flex flex-wrap gap-2">
+        <a href="#tokens" class="bg-obsidian border border-spaceBorder hover:border-tealAccent/30 text-xs px-4 py-2 rounded-lg text-mutedGray hover:text-tealAccent transition-all">1. Design Tokens</a>
+        <a href="#components" class="bg-obsidian border border-spaceBorder hover:border-tealAccent/30 text-xs px-4 py-2 rounded-lg text-mutedGray hover:text-tealAccent transition-all">2. Component Matrix</a>
+        <a href="#interactions" class="bg-obsidian border border-spaceBorder hover:border-tealAccent/30 text-xs px-4 py-2 rounded-lg text-mutedGray hover:text-tealAccent transition-all">3. Interaction Flows</a>
+        <a href="#wireframe" class="bg-tealAccent text-obsidian hover:bg-[#00d1b5] text-xs px-4 py-2 rounded-lg font-bold transition-all shadow-teal-glow">4. Wireframe Layout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-8 mt-16 space-y-20">
+
+    <!-- SECTION 1: DESIGN TOKENS -->
+    <section id="tokens">
+      <div class="border-b border-spaceBorder pb-4 mb-8">
+        <h2 class="text-xl font-bold text-pureWhite flex items-center gap-2">
+          <span class="text-tealAccent">#01</span> Core Design Tokens
+        </h2>
+        <p class="text-xs text-mutedGray">Baseline specifications for consistent visual themes across layout viewports.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Palette Token -->
+        <div class="bg-slateCard border border-spaceBorder rounded-xl p-5 shadow-glass flex flex-col justify-between">
+          <h3 class="text-xs font-bold text-mutedGray uppercase tracking-widest mb-4">Color Palette</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-[#0B0F19] border border-spaceBorder"></div>
+              <div>
+                <p class="text-xs font-bold font-mono">#0B0F19</p>
+                <p class="text-[10px] text-mutedGray">Background (Obsidian)</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-[#161B26] border border-spaceBorder"></div>
+              <div>
+                <p class="text-xs font-bold font-mono">#161B26</p>
+                <p class="text-[10px] text-mutedGray">Surface/Card (Slate)</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-[#00F5D4] shadow-teal-glow"></div>
+              <div>
+                <p class="text-xs font-bold font-mono">#00F5D4</p>
+                <p class="text-[10px] text-mutedGray">Accent (Electric Teal)</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded bg-[#FF3B30] shadow-red-glow"></div>
+              <div>
+                <p class="text-xs font-bold font-mono">#FF3B30</p>
+                <p class="text-[10px] text-mutedGray">Destructive (Crimson)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="bg-slateCard border border-spaceBorder rounded-xl p-5 shadow-glass">
+          <h3 class="text-xs font-bold text-mutedGray uppercase tracking-widest mb-4">Typography Scale</h3>
+          <div class="space-y-2.5 font-sans">
+            <div class="flex justify-between items-baseline border-b border-spaceBorder pb-1.5">
+              <span class="text-[10px] text-mutedGray">Title H1 (36px)</span>
+              <span class="text-2xl font-black text-pureWhite">36px</span>
+            </div>
+            <div class="flex justify-between items-baseline border-b border-spaceBorder pb-1.5">
+              <span class="text-[10px] text-mutedGray">Subhead (20px)</span>
+              <span class="text-sm font-bold text-pureWhite">20px</span>
+            </div>
+            <div class="flex justify-between items-baseline border-b border-spaceBorder pb-1.5">
+              <span class="text-[10px] text-mutedGray">Body (14px)</span>
+              <span class="text-xs text-pureWhite">14px</span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-[10px] text-mutedGray">Caption (12px)</span>
+              <span class="text-[10px] text-mutedGray">12px</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spacing Scale -->
+        <div class="bg-slateCard border border-spaceBorder rounded-xl p-5 shadow-glass">
+          <h3 class="text-xs font-bold text-mutedGray uppercase tracking-widest mb-4">Spacing Standards</h3>
+          <div class="space-y-2 text-[10px] font-mono">
+            <div class="flex justify-between items-center bg-obsidian px-3 py-1.5 rounded">
+              <span>Card Padding</span>
+              <span class="text-tealAccent">p-6 (24px)</span>
+            </div>
+            <div class="flex justify-between items-center bg-obsidian px-3 py-1.5 rounded">
+              <span>Grid Gaps</span>
+              <span class="text-tealAccent">gap-6 (24px)</span>
+            </div>
+            <div class="flex justify-between items-center bg-obsidian px-3 py-1.5 rounded">
+              <span>Inner Elements</span>
+              <span class="text-tealAccent">space-y-4 (16px)</span>
+            </div>
+            <div class="flex justify-between items-center bg-obsidian px-3 py-1.5 rounded">
+              <span>Tag Padding</span>
+              <span class="text-tealAccent">px-2.5 py-1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roundness & Shadow -->
+        <div class="bg-slateCard border border-spaceBorder rounded-xl p-5 shadow-glass">
+          <h3 class="text-xs font-bold text-mutedGray uppercase tracking-widest mb-4">Borders & Shadows</h3>
+          <div class="space-y-3 font-sans text-xs">
+            <div>
+              <p class="text-[10px] text-mutedGray">Card Roundness:</p>
+              <p class="font-mono mt-1 text-pureWhite">rounded-2xl (16px)</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-mutedGray">Glow Shadow Values:</p>
+              <div class="flex gap-3 mt-1.5 font-mono text-[10px]">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3.5 h-3.5 rounded bg-tealAccent shadow-teal-glow"></span>
+                  <span>tealAccent</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3.5 h-3.5 rounded bg-crimsonRed shadow-red-glow"></span>
+                  <span>crimsonRed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: COMPONENT STATE MATRIX -->
+    <section id="components">
+      <div class="border-b border-spaceBorder pb-4 mb-8">
+        <h2 class="text-xl font-bold text-pureWhite flex items-center gap-2">
+          <span class="text-tealAccent">#02</span> Interactive Component Matrix
+        </h2>
+        <p class="text-xs text-mutedGray">Every interface element mapped in all interaction states, complete with copy-pasteable HTML snippets.</p>
+      </div>
+
+      <div class="space-y-12">
+        <!-- 2.1 Buttons Matrix -->
+        <div class="bg-slateCard border border-spaceBorder rounded-2xl p-6 shadow-glass space-y-6">
+          <h3 class="text-sm font-bold text-pureWhite tracking-wide border-b border-spaceBorder pb-2">Button States</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Primary Teal Button -->
+            <div class="space-y-4">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Primary (Teal Accent)</span>
+              <button class="w-full bg-tealAccent text-obsidian font-bold text-xs px-4 py-2.5 rounded-lg hover:bg-[#00d1b5] hover:shadow-teal-glow active:scale-[0.98] transition-all">
+                Primary Action
+              </button>
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><button class="bg-tealAccent text-obsidian font-bold text-xs px-4 py-2.5 rounded-lg hover:bg-[#00d1b5] hover:shadow-teal-glow transition-all">Action</button></textarea>
+            </div>
+
+            <!-- Secondary Outline -->
+            <div class="space-y-4">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Secondary (Outline)</span>
+              <button class="w-full bg-transparent border border-white/10 hover:bg-white/5 text-pureWhite font-bold text-xs px-4 py-2.5 rounded-lg transition-all">
+                Secondary Action
+              </button>
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><button class="bg-transparent border border-white/10 hover:bg-white/5 text-pureWhite font-bold text-xs px-4 py-2.5 rounded-lg transition-all">Action</button></textarea>
+            </div>
+
+            <!-- Destructive Crimson Button -->
+            <div class="space-y-4">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Destructive (Crimson)</span>
+              <button class="w-full bg-crimsonRed text-pureWhite font-bold text-xs px-4 py-2.5 rounded-lg hover:bg-red-600 hover:shadow-red-glow active:scale-[0.98] transition-all">
+                Revoke Wallet
+              </button>
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><button class="bg-crimsonRed text-pureWhite font-bold text-xs px-4 py-2.5 rounded-lg hover:bg-red-600 hover:shadow-red-glow transition-all">Action</button></textarea>
+            </div>
+
+            <!-- Disabled State -->
+            <div class="space-y-4">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Disabled State</span>
+              <button disabled class="w-full bg-white/5 border border-spaceBorder text-mutedGray/50 font-bold text-xs px-4 py-2.5 rounded-lg cursor-not-allowed">
+                Locked Action
+              </button>
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><button disabled class="bg-white/5 border border-spaceBorder text-mutedGray/50 font-bold text-xs px-4 py-2.5 rounded-lg cursor-not-allowed">Action</button></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.2 Inputs Matrix -->
+        <div class="bg-slateCard border border-spaceBorder rounded-2xl p-6 shadow-glass space-y-6">
+          <h3 class="text-sm font-bold text-pureWhite tracking-wide border-b border-spaceBorder pb-2">Inputs States</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Input: Default -->
+            <div class="space-y-3">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Normal/Default</span>
+              <input type="text" placeholder="Recipient address (T...)" class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite placeholder-mutedGray/50 transition-all">
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><input type="text" placeholder="..." class="bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all"></textarea>
+            </div>
+
+            <!-- Input: Error -->
+            <div class="space-y-3">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Error State</span>
+              <div class="space-y-1.5">
+                <input type="text" value="0x83ab293" class="w-full bg-obsidian border border-crimsonRed focus:border-crimsonRed outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all">
+                <span class="text-[9px] text-crimsonRed font-medium">⚠️ Wallet address must start with 'T'</span>
+              </div>
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><input type="text" class="bg-obsidian border border-crimsonRed text-xs px-4 py-3 rounded-lg text-pureWhite"></textarea>
+            </div>
+
+            <!-- Input: Valid -->
+            <div class="space-y-3">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Valid State</span>
+              <div class="relative">
+                <input type="text" value="TNU1s6m2o9Muxa3xW5M6D7N2oP4yT8Q5R6" class="w-full bg-obsidian border border-tealAccent/50 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite font-mono pr-8">
+                <span class="absolute right-3 top-3.5 text-tealAccent text-xs">✓</span>
+              </div>
+              <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><div class="relative"><input type="text" class="bg-obsidian border border-tealAccent/50 text-xs px-4 py-3 rounded-lg text-pureWhite"><span class="absolute right-3 top-3.5 text-tealAccent text-xs">✓</span></div></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.3 Status Badges & Dropdowns -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Badges -->
+          <div class="bg-slateCard border border-spaceBorder rounded-2xl p-6 shadow-glass space-y-4">
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-2">Status Badges</h3>
+            <div class="flex flex-wrap gap-2.5">
+              <span class="bg-tealAccent/10 text-tealAccent border border-tealAccent/20 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded shadow-teal-glow/5">Registered</span>
+              <span class="bg-crimsonRed/10 text-crimsonRed border border-crimsonRed/20 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded shadow-red-glow/5">Revoked</span>
+              <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded">Admin</span>
+              <span class="bg-tron-amber/10 text-tron-amber border border-tron-amber/20 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded">Owner</span>
+            </div>
+            <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><span class="bg-tealAccent/10 text-tealAccent border border-tealAccent/20 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded shadow-teal-glow/5">Registered</span></textarea>
+          </div>
+
+          <!-- Dropdowns -->
+          <div class="bg-slateCard border border-spaceBorder rounded-2xl p-6 shadow-glass space-y-4">
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-2">Dropdown Filters</h3>
+            <select class="w-full bg-obsidian border border-spaceBorder text-xs p-2.5 rounded-lg outline-none text-mutedGray focus:border-tealAccent/40 transition-all">
+              <option value="shasta">Shasta Testnet (Nile Node)</option>
+              <option value="mainnet">TRON Mainnet Grid</option>
+            </select>
+            <textarea readonly class="w-full h-16 bg-obsidian border border-spaceBorder text-[10px] p-2 rounded-lg font-mono text-mutedGray outline-none cursor-text"><select class="bg-obsidian border border-spaceBorder text-xs p-2.5 rounded-lg text-mutedGray"><option>Shasta Testnet</option></select></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTION FLOWS -->
+    <section id="interactions">
+      <div class="border-b border-spaceBorder pb-4 mb-8">
+        <h2 class="text-xl font-bold text-pureWhite flex items-center gap-2">
+          <span class="text-tealAccent">#03</span> Dynamic Interaction Patterns
+        </h2>
+        <p class="text-xs text-mutedGray">Interactive JavaScript-driven mockups showcasing UI state loops.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Pattern A: Wallet Toast Notification -->
+        <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass flex flex-col justify-between h-72">
+          <div>
+            <h4 class="text-xs font-bold text-pureWhite uppercase tracking-widest">TronLink Connected Toast</h4>
+            <p class="text-[10px] text-mutedGray mt-1 leading-relaxed">
+              Triggers a floating modal slide-in notifying developers of connection states.
+            </p>
+          </div>
+          <button onclick="triggerToastDemo()" class="w-full bg-tealAccent text-obsidian font-bold text-xs py-2.5 rounded-lg shadow-teal-glow hover:bg-[#00d1b5]">
+            Trigger Connection Toast
+          </button>
+        </div>
+
+        <!-- Pattern B: Validation Error State -->
+        <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass flex flex-col justify-between h-72">
+          <div>
+            <h4 class="text-xs font-bold text-pureWhite uppercase tracking-widest">Hash Validation Validator</h4>
+            <p class="text-[10px] text-mutedGray mt-1 leading-relaxed">
+              Dynamically analyzes inputs and returns instant feedback logs based on formats.
+            </p>
+            <div class="mt-4">
+              <input type="text" id="demoInputHash" oninput="validateDemoHash()" placeholder="Enter 64-char hex hash..." class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/50 outline-none text-xs px-3 py-2 rounded-lg text-pureWhite">
+              <span id="demoHashFeedback" class="text-[9px] mt-1.5 block text-mutedGray">Type hex strings to test</span>
+            </div>
+          </div>
+          <div class="text-[9px] text-mutedGray/50 font-mono">Real-time Zod-like validation</div>
+        </div>
+
+        <!-- Pattern C: Step-by-Step Upgrade Loader -->
+        <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass flex flex-col justify-between h-72">
+          <div>
+            <h4 class="text-xs font-bold text-pureWhite uppercase tracking-widest">Contract Upgrade Progress Tracker</h4>
+            <p class="text-[10px] text-mutedGray mt-1 leading-relaxed">
+              Renders loading bars and stage descriptors for proxy modifications.
+            </p>
+            
+            <div class="mt-4 space-y-2.5">
+              <div class="h-2 w-full bg-obsidian rounded-full overflow-hidden border border-spaceBorder">
+                <div id="demoProgressFill" class="h-full bg-tealAccent shadow-teal-glow transition-all duration-300" style="width: 0%;"></div>
+              </div>
+              <p id="demoProgressLabel" class="text-[9px] font-mono text-mutedGray text-center">System Idle</p>
+            </div>
+          </div>
+          <button onclick="triggerProgressDemo()" id="btnProgressDemo" class="w-full bg-transparent border border-tealAccent/30 hover:bg-tealAccent/5 text-tealAccent font-bold text-xs py-2.5 rounded-lg">
+            Start Upgrade Progress
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Viewport Layout Wireframe -->
+    <section id="wireframe">
+      <div class="border-b border-spaceBorder pb-4 mb-8">
+        <h2 class="text-xl font-bold text-pureWhite flex items-center gap-2">
+          <span class="text-tealAccent">#04</span> Dashboard Viewport Wireframe
+        </h2>
+        <p class="text-xs text-mutedGray">Interactive viewport layout mock simulating responsive grid behaviors.</p>
+      </div>
+
+      <!-- Dashboard Shell container -->
+      <div class="border border-white/10 rounded-2xl overflow-hidden shadow-glass bg-obsidian text-pureWhite flex flex-col md:flex-row h-[560px]">
+        <!-- Dashboard Sidebar navigation -->
+        <aside class="w-full md:w-56 bg-slateCard border-r border-spaceBorder p-5 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded bg-tealAccent flex items-center justify-center font-extrabold text-xs text-obsidian shadow-teal-glow">T</span>
+              <span class="font-bold text-xs tracking-wider">TRON Ecosystem</span>
+            </div>
+            
+            <!-- nav triggers -->
+            <nav class="space-y-1">
+              <button class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold bg-tealAccent/15 text-tealAccent border border-tealAccent/20">📊 Overview</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-mutedGray hover:bg-white/5">💸 Transfers Logs</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-mutedGray hover:bg-white/5">👤 Registry</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-mutedGray hover:bg-white/5">⚙️ Settings</button>
+            </nav>
+          </div>
+
+          <span class="text-[8px] text-mutedGray/40 font-mono">EVM: Shanghai Compat</span>
+        </aside>
+
+        <!-- Main Body -->
+        <div class="flex-1 flex flex-col min-w-0">
+          <!-- Header Navbar -->
+          <header class="h-16 bg-slateCard/40 border-b border-spaceBorder flex items-center justify-between px-6 z-10">
+            <div class="text-[10px] text-mutedGray font-bold uppercase tracking-widest">Overview Panel</div>
+            
+            <button onclick="toggleWireframeWallet()" id="wireframeWalletBtn" class="bg-tealAccent hover:bg-[#00d1b5] text-obsidian font-bold text-[9px] px-3.5 py-1.5 rounded-lg shadow-teal-glow transition-all">
+              Connect Wallet
+            </button>
+          </header>
+
+          <!-- Content Dashboard Grid -->
+          <div class="flex-1 p-6 bg-[#090d16] overflow-y-auto space-y-6">
+            <!-- Row Cards -->
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-slateCard border border-spaceBorder rounded-xl p-4 shadow-sm">
+                <span class="text-[9px] text-mutedGray uppercase font-bold tracking-wider">Total supply</span>
+                <p class="text-sm font-bold text-pureWhite mt-1">1,000,000 ACT</p>
+              </div>
+              <div class="bg-slateCard border border-spaceBorder rounded-xl p-4 shadow-sm">
+                <span class="text-[9px] text-mutedGray uppercase font-bold tracking-wider">Active Register</span>
+                <p class="text-sm font-bold text-pureWhite mt-1">142 wallets</p>
+              </div>
+              <div class="bg-slateCard border border-spaceBorder rounded-xl p-4 shadow-sm">
+                <span class="text-[9px] text-mutedGray uppercase font-bold tracking-wider">Ecosystem Status</span>
+                <p class="text-xs font-bold text-tealAccent mt-1 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-tealAccent animate-pulse shadow-teal-glow"></span>
+                  Active Nile
+                </p>
+              </div>
+            </div>
+
+            <!-- Content Split details -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="bg-slateCard border border-spaceBorder rounded-xl p-4 space-y-2">
+                <h5 class="text-xs font-bold text-pureWhite">Audit logs</h5>
+                <div class="text-[9px] font-mono text-mutedGray space-y-1">
+                  <p><span class="text-tealAccent">✓</span> Contract Proxy verified at Nile network.</p>
+                  <p><span class="text-tealAccent">✓</span> Owner checks initialized successfully.</p>
+                </div>
+              </div>
+              <div class="bg-slateCard border border-spaceBorder rounded-xl p-4 flex flex-col justify-center items-center text-center py-8">
+                <span class="text-2xl">⚡</span>
+                <h5 class="text-xs font-bold text-pureWhite mt-2">Resources Limits Available</h5>
+                <p class="text-[9px] text-mutedGray mt-1">Energy: 85,290 / Bandwidth: 4,520</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive JavaScript codes -->
+  <script>
+    // 1. Toast Notification Trigger
+    function triggerToastDemo() {
+      const wrapper = document.getElementById('toastWrapper');
+      
+      const toast = document.createElement('div');
+      toast.className = "bg-slateCard border border-tealAccent/20 p-4 rounded-xl shadow-glass flex items-center gap-3 w-80 pointer-events-auto transform translate-y-10 opacity-0 transition-all duration-300";
+      toast.innerHTML = `
+        <div class="w-2.5 h-2.5 rounded-full bg-tealAccent shadow-teal-glow shrink-0 animate-pulse"></div>
+        <div class="flex-1">
+          <p class="text-xs font-bold text-pureWhite leading-none">TronLink Connected</p>
+          <p class="text-[9px] text-mutedGray mt-1 font-mono">Addr: TNU1s6m2o9Muxa...</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-mutedGray hover:text-pureWhite text-xs px-1">✕</button>
+      `;
+
+      wrapper.appendChild(toast);
+
+      // Trigger animation
+      setTimeout(() => {
+        toast.classList.remove('translate-y-10', 'opacity-0');
+      }, 50);
+
+      // Auto dismiss
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // 2. Hash validation state toggler
+    function validateDemoHash() {
+      const input = document.getElementById('demoInputHash');
+      const feedback = document.getElementById('demoHashFeedback');
+      const value = input.value;
+
+      if (!value) {
+        input.className = "w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/50 outline-none text-xs px-3 py-2 rounded-lg text-pureWhite";
+        feedback.innerText = "Type hex strings to test";
+        feedback.className = "text-[9px] mt-1.5 block text-mutedGray";
+        return;
+      }
+
+      const isHex64 = /^[0-9a-fA-F]{64}$/.test(value);
+
+      if (isHex64) {
+        input.className = "w-full bg-obsidian border border-tealAccent outline-none text-xs px-3 py-2 rounded-lg text-pureWhite";
+        feedback.innerText = "✓ Valid 64-character sha256 hex hash";
+        feedback.className = "text-[9px] mt-1.5 block text-tealAccent font-bold";
+      } else {
+        input.className = "w-full bg-obsidian border border-crimsonRed focus:border-crimsonRed outline-none text-xs px-3 py-2 rounded-lg text-pureWhite";
+        feedback.innerText = `⚠️ Invalid character count (${value.length}/64) or non-hex formatting`;
+        feedback.className = "text-[9px] mt-1.5 block text-crimsonRed font-medium";
+      }
+    }
+
+    // 3. Step-by-Step Progress Upgrade simulation
+    let progressInterval = null;
+    function triggerProgressDemo() {
+      if (progressInterval) return;
+
+      const fill = document.getElementById('demoProgressFill');
+      const label = document.getElementById('demoProgressLabel');
+      const btn = document.getElementById('btnProgressDemo');
+      
+      let percent = 0;
+      btn.disabled = true;
+      btn.innerText = "Processing upgrade...";
+      btn.className = "w-full bg-white/5 border border-spaceBorder text-mutedGray/50 font-bold text-xs py-2.5 rounded-lg cursor-not-allowed";
+
+      const stages = [
+        { limit: 25, msg: "Step 1/4: Preparing upgrade logic parameters..." },
+        { limit: 50, msg: "Step 2/4: Authorizing upgrade owner authorization keys..." },
+        { limit: 75, msg: "Step 3/4: Broadcasting upgradeTo transactions to Shasta..." },
+        { limit: 100, msg: "Step 4/4: TVM deployment complete. Verifying logs..." }
+      ];
+
+      progressInterval = setInterval(() => {
+        percent += 2;
+        fill.style.width = `${percent}%`;
+
+        // Update stages
+        const stage = stages.find(s => percent <= s.limit);
+        if (stage) {
+          label.innerText = stage.msg;
+        }
+
+        if (percent >= 100) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+          label.innerText = "🎉 Contract Logic Upgraded successfully!";
+          label.className = "text-[9px] font-mono text-tealAccent text-center font-bold";
+          
+          setTimeout(() => {
+            fill.style.width = `0%`;
+            label.innerText = "System Idle";
+            label.className = "text-[9px] font-mono text-mutedGray text-center";
+            btn.disabled = false;
+            btn.innerText = "Start Upgrade Progress";
+            btn.className = "w-full bg-transparent border border-tealAccent/30 hover:bg-tealAccent/5 text-tealAccent font-bold text-xs py-2.5 rounded-lg";
+          }, 3500);
+        }
+      }, 80);
+    }
+
+    // 4. Wireframe wallet status simulation
+    let wireframeConnected = false;
+    function toggleWireframeWallet() {
+      wireframeConnected = !wireframeConnected;
+      const btn = document.getElementById('wireframeWalletBtn');
+      
+      if (wireframeConnected) {
+        btn.innerText = "TNU1s6m2o9Muxa...";
+        btn.className = "bg-transparent border border-tealAccent/30 text-tealAccent font-mono text-[9px] px-3.5 py-1.5 rounded-lg hover:bg-tealAccent/10 transition-all";
+      } else {
+        btn.innerText = "Connect Wallet";
+        btn.className = "bg-tealAccent hover:bg-[#00d1b5] text-obsidian font-bold text-[9px] px-3.5 py-1.5 rounded-lg shadow-teal-glow transition-all";
+      }
+    }
+  </script>
+</body>
+</html>
