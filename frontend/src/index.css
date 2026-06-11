@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-obsidian text-pureWhite font-sans antialiased selection:bg-tealAccent/20;
+  }
+}
