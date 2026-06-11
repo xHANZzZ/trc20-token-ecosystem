@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTronLink } from '../hooks/useTronLink.js';
+import { useTronLink } from '../hooks/useTronLink';
 
 export const Overview: React.FC = () => {
   const { isConnected, network } = useTronLink();
