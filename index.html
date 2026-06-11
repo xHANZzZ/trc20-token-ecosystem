@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRC20 Token Ecosystem - Admin Dashboard</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- TronWeb CDN Link (Valid & Up-to-date) -->
+  <script src="https://cdn.jsdelivr.net/npm/tronweb@6.0.0/dist/TronWeb.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#0B0F19',
+            slateCard: '#161B26',
+            tealAccent: '#00F5D4',
+            crimsonRed: '#FF3B30',
+            pureWhite: '#FFFFFF',
+            mutedGray: '#94A3B8',
+            spaceBorder: 'rgba(255, 255, 255, 0.05)',
+            spaceAccent: '#1F293D',
+            tronAmber: '#FF9F0A'
+          },
+          boxShadow: {
+            'teal-glow': '0 0 15px rgba(0, 245, 212, 0.25)',
+            'red-glow': '0 0 15px rgba(255, 59, 48, 0.25)',
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar and glow helpers */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0F19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1F293D;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00F5D4;
+    }
+  </style>
+</head>
+<body class="bg-obsidian text-pureWhite min-h-screen font-sans antialiased flex flex-col md:flex-row">
+
+  <!-- Toast Wrapper Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none"></div>
+
+  <!-- Sidebar Navigation Menu -->
+  <aside class="w-full md:w-64 bg-slateCard border-r border-spaceBorder flex flex-col justify-between p-6 shrink-0">
+    <div class="space-y-8">
+      <!-- Logo Branding -->
+      <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded bg-tealAccent flex items-center justify-center font-black text-sm text-obsidian shadow-teal-glow">
+          T
+        </span>
+        <div class="flex flex-col">
+          <span class="font-bold text-sm tracking-wider leading-none">TRC20 Admin</span>
+          <span class="text-[9px] text-mutedGray mt-1 tracking-widest font-mono">UUPS PROXY</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav id="sidebarNav" class="space-y-1.5">
+        <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold text-tealAccent bg-tealAccent/10 border border-tealAccent/15 transition-all text-left">
+          <span>📊</span>
+          <span>Overview</span>
+        </button>
+        <button onclick="switchTab('transfers')" id="nav-transfers" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold text-mutedGray hover:bg-spaceBorder/5 hover:text-pureWhite transition-all text-left">
+          <span>💸</span>
+          <span>Transfers Logs</span>
+        </button>
+        <button onclick="switchTab('registry')" id="nav-registry" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold text-mutedGray hover:bg-spaceBorder/5 hover:text-pureWhite transition-all text-left">
+          <span>👤</span>
+          <span>Wallet Registry</span>
+        </button>
+        <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold text-mutedGray hover:bg-spaceBorder/5 hover:text-pureWhite transition-all text-left">
+          <span>⚙️</span>
+          <span>Settings & Upgrades</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Metadata version display -->
+    <div class="text-[9px] text-mutedGray/50 mt-8 space-y-0.5 font-mono">
+      <p>TVM Shanghai standard</p>
+      <p id="rpcDisplay">RPC: Shasta Testnet</p>
+    </div>
+  </aside>
+
+  <!-- Main Application Body Content -->
+  <div class="flex-1 flex flex-col min-w-0">
+    
+    <!-- Top Header Navigation Navbar -->
+    <header class="h-20 bg-slateCard/35 border-b border-spaceBorder flex items-center justify-between px-8 backdrop-blur-md shrink-0">
+      <div>
+        <h1 id="headerTitle" class="text-sm font-extrabold uppercase tracking-widest text-mutedGray">
+          Overview Panel
+        </h1>
+        <p class="text-[10px] text-mutedGray mt-0.5">Manage compliance registers and token metrics</p>
+      </div>
+
+      <!-- Wallet connection controls -->
+      <div id="walletWrapper">
+        <button onclick="connectWallet()" id="connectWalletBtn" class="bg-tealAccent hover:bg-[#00d1b5] active:scale-95 text-obsidian font-bold text-xs px-5 py-2.5 rounded-xl shadow-teal-glow transition-all">
+          Connect Wallet
+        </button>
+      </div>
+    </header>
+
+    <!-- Error/Warning Messages Area -->
+    <div class="px-8 mt-6 space-y-4">
+      <!-- Error Banner -->
+      <div id="errorBanner" class="hidden bg-crimsonRed/10 border border-crimsonRed/20 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-base">⚠️</span>
+          <p id="errorText" class="text-xs text-crimsonRed font-medium"></p>
+        </div>
+        <button onclick="document.getElementById('errorBanner').classList.add('hidden')" class="text-crimsonRed hover:text-white text-xs px-2">✕</button>
+      </div>
+
+      <!-- Warning Banner -->
+      <div id="warningBanner" class="hidden bg-tronAmber/10 border border-tronAmber/20 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-base">⚠️</span>
+          <p id="warningText" class="text-xs text-tronAmber font-medium"></p>
+        </div>
+        <button onclick="document.getElementById('warningBanner').classList.add('hidden')" class="text-tronAmber hover:text-white text-xs px-2">✕</button>
+      </div>
+    </div>
+
+    <!-- Main viewports space -->
+    <main class="flex-1 p-8 overflow-y-auto space-y-8">
+      
+      <!-- TAB A: OVERVIEW PANEL -->
+      <section id="tabContent-overview" class="space-y-8">
+        <!-- Grid metrics panels -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-slateCard border border-spaceBorder p-5 rounded-2xl shadow-glass flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Total Supply</span>
+              <p class="text-lg font-black text-pureWhite">1,000,000.00 ACT</p>
+              <span class="text-[10px] text-mutedGray/70 mt-0.5 block font-medium">TRC20 Token Supply</span>
+            </div>
+            <span class="text-2xl bg-obsidian w-12 h-12 flex items-center justify-center rounded-xl border border-spaceBorder">💎</span>
+          </div>
+
+          <div class="bg-slateCard border border-spaceBorder p-5 rounded-2xl shadow-glass flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Active Registry</span>
+              <p class="text-lg font-black text-pureWhite" id="registryCount">2 Wallets</p>
+              <span class="text-[10px] text-mutedGray/70 mt-0.5 block font-medium">Registered Identities</span>
+            </div>
+            <span class="text-2xl bg-obsidian w-12 h-12 flex items-center justify-center rounded-xl border border-spaceBorder">👤</span>
+          </div>
+
+          <div class="bg-slateCard border border-spaceBorder p-5 rounded-2xl shadow-glass flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Available Energy</span>
+              <p class="text-lg font-black text-pureWhite">85,290 / 100,000</p>
+              <span class="text-[10px] text-mutedGray/70 mt-0.5 block font-medium">Estimated Gas Limits</span>
+            </div>
+            <span class="text-2xl bg-obsidian w-12 h-12 flex items-center justify-center rounded-xl border border-spaceBorder">⚡</span>
+          </div>
+
+          <div class="bg-slateCard border border-spaceBorder p-5 rounded-2xl shadow-glass flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-mutedGray">Available Bandwidth</span>
+              <p class="text-lg font-black text-pureWhite">4,520 / 5,000 kb</p>
+              <span class="text-[10px] text-mutedGray/70 mt-0.5 block font-medium">Remaining Network Net</span>
+            </div>
+            <span class="text-2xl bg-obsidian w-12 h-12 flex items-center justify-center rounded-xl border border-spaceBorder">🌐</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Activity vector chart -->
+        <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-pureWhite tracking-tight">Real-Time Transaction Activity</h3>
+            <p class="text-[10px] text-mutedGray mt-0.5 font-medium">Ecosystem transaction throughput trend (last 7 blocks)</p>
+          </div>
+
+          <div class="relative h-64 bg-obsidian/45 border border-spaceBorder rounded-xl p-4 flex items-end justify-between overflow-hidden">
+            <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+              <path d="M 0 100 L 0 70 L 16.6 50 L 33.3 80 L 50 40 L 66.6 60 L 83.3 30 L 100 45 L 100 100 Z" fill="url(#teal-gradient)" opacity="0.1" />
+              <path d="M 0 70 L 16.6 50 L 33.3 80 L 50 40 L 66.6 60 L 83.3 30 L 100 45" fill="none" stroke="#00F5D4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              <defs>
+                <linearGradient id="teal-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#00F5D4" />
+                  <stop offset="100%" stop-color="#00F5D4" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="absolute inset-0 flex flex-col justify-between py-6 px-4 pointer-events-none text-[8px] font-mono text-mutedGray/25">
+              <div class="border-b border-spaceBorder w-full pb-1 text-right">80tx</div>
+              <div class="border-b border-spaceBorder w-full pb-1 text-right">60tx</div>
+              <div class="border-b border-spaceBorder w-full pb-1 text-right">40tx</div>
+              <div class="border-b border-spaceBorder w-full pb-1 text-right">20tx</div>
+            </div>
+            <div class="absolute bottom-2 inset-x-4 flex justify-between text-[8px] font-mono text-mutedGray/50">
+              <span>Block #8493021</span>
+              <span>Block #8493022</span>
+              <span>Block #8493023</span>
+              <span>Block #8493024</span>
+              <span>Block #8493025</span>
+              <span>Block #8493026</span>
+              <span>Block #8493027</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB B: TRANSFERS LEDGER PANEL -->
+      <section id="tabContent-transfers" class="hidden space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Initiate Form -->
+          <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass h-fit">
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-3 mb-4">
+              Initiate Manual Token Transfer
+            </h3>
+            <form onsubmit="handleTransfer(event)" class="space-y-4">
+              <div>
+                <label class="block text-[10px] font-bold text-mutedGray uppercase tracking-wide mb-1.5">Recipient Address</label>
+                <input id="transferRecipient" type="text" placeholder="T..." class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-mutedGray uppercase tracking-wide mb-1.5">Transfer Amount</label>
+                <input id="transferAmount" type="number" step="any" placeholder="0.00" class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all">
+              </div>
+              <button id="btnSubmitTransfer" type="submit" class="w-full bg-tealAccent hover:bg-[#00d1b5] text-obsidian font-bold text-xs px-4 py-2.5 rounded-lg shadow-teal-glow transition-all mt-2">
+                Broadcast Transfer
+              </button>
+            </form>
+          </div>
+
+          <!-- History Table -->
+          <div class="lg:col-span-2 bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-spaceBorder pb-3">
+                <h3 class="text-sm font-bold text-pureWhite">Historical Transactions Ledger</h3>
+                <input id="txSearch" oninput="filterTransactions()" type="text" placeholder="Search by wallet / TxID..." class="bg-obsidian border border-spaceBorder text-[10px] px-3 py-2 rounded-lg text-pureWhite outline-none placeholder-mutedGray/50 focus:border-tealAccent/40 w-full md:w-64">
+              </div>
+              
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-spaceBorder text-mutedGray text-[10px] font-bold uppercase tracking-wider">
+                      <th class="py-3 px-2">TxID</th>
+                      <th class="py-3 px-2">Timestamp</th>
+                      <th class="py-3 px-2">Destination</th>
+                      <th class="py-3 px-2 text-right">Value</th>
+                      <th class="py-3 px-2 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="txTableBody" class="font-mono text-mutedGray">
+                    <!-- Dynamic rendering -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB C: WALLET REGISTRY IDENTITY -->
+      <section id="tabContent-registry" class="hidden space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Registration form -->
+          <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass h-fit relative overflow-hidden">
+            <div id="registryLockOverlay" class="hidden absolute inset-0 bg-slateCard/90 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center">
+              <span class="text-2xl">🔒</span>
+              <h4 class="text-xs font-black uppercase text-tealAccent mt-2 tracking-widest">Admin Credentials Required</h4>
+              <p class="text-[10px] text-mutedGray mt-2 px-4 leading-relaxed">
+                Connect your admin authorization wallet to register or modify profiles in the contract state.
+              </p>
+            </div>
+            
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-3 mb-4">
+              Register Wallet Profile
+            </h3>
+            <form onsubmit="handleRegister(event)" class="space-y-4">
+              <div>
+                <label class="block text-[10px] font-bold text-mutedGray uppercase tracking-wide mb-1.5">Wallet Address</label>
+                <input id="registryAddress" type="text" placeholder="T..." class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-mutedGray uppercase tracking-wide mb-1.5">Identity Hash</label>
+                <input id="registryHash" type="text" placeholder="64-character sha256 hex string" class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all font-mono">
+              </div>
+              <button type="submit" class="w-full bg-tealAccent hover:bg-[#00d1b5] text-obsidian font-bold text-xs px-4 py-2.5 rounded-lg shadow-teal-glow transition-all mt-2">
+                Register Address
+              </button>
+            </form>
+          </div>
+
+          <!-- Registry Directory -->
+          <div class="lg:col-span-2 bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass">
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-3 mb-4">
+              Registered Identities Directory
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-spaceBorder text-mutedGray text-[10px] font-bold uppercase tracking-wider">
+                    <th class="py-3 px-2">Registered Address</th>
+                    <th class="py-3 px-2">Identity Signature</th>
+                    <th class="py-3 px-2">Created At</th>
+                    <th class="py-3 px-2 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="registryTableBody" class="font-mono text-mutedGray">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB D: SETTINGS & UPGRADES -->
+      <section id="tabContent-settings" class="hidden space-y-8 relative">
+        <div id="settingsLockOverlay" class="hidden absolute inset-0 bg-obsidian/90 backdrop-blur-[3px] z-10 flex flex-col items-center justify-center p-6 text-center rounded-2xl border border-spaceBorder">
+          <span class="text-3xl">🔒</span>
+          <h3 class="text-sm font-black uppercase text-tealAccent mt-4 tracking-widest">Ownership Credentials Required</h3>
+          <p class="text-xs text-mutedGray mt-2 max-w-sm leading-relaxed">
+            These settings govern the proxy logic upgrades and custodian parameters. Connect the verified contract owner wallet.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Transfer ownership -->
+          <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass space-y-6">
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-3">
+              Two-Step Ownership Delegation
+            </h3>
+            <form onsubmit="handleProposeOwner(event)" class="space-y-4">
+              <div>
+                <label class="block text-[10px] font-bold text-mutedGray uppercase tracking-wide mb-1.5">Propose New Owner Address</label>
+                <input id="proposeOwnerAddress" type="text" placeholder="T..." class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all font-mono">
+              </div>
+              <button type="submit" class="bg-tealAccent hover:bg-[#00d1b5] text-obsidian font-bold text-xs px-4 py-2.5 rounded-lg shadow-teal-glow transition-all">
+                Propose New Owner
+              </button>
+            </form>
+
+            <div id="pendingOwnerDiv" class="hidden bg-obsidian border border-spaceBorder p-4 rounded-xl space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-mutedGray uppercase tracking-wider">Pending Proposed Owner</span>
+                <span class="text-[9px] bg-tronAmber/10 text-tronAmber border border-tronAmber/20 px-2 py-0.5 rounded font-bold uppercase animate-pulse">Pending</span>
+              </div>
+              <p id="pendingOwnerText" class="text-xs font-mono text-pureWhite break-all"></p>
+              <div id="claimButtonArea" class="hidden border-t border-spaceBorder pt-3 mt-2">
+                <p class="text-[10px] text-mutedGray mb-2">Connected wallet matches pending claimant. Accept to finalize ownership change.</p>
+                <button onclick="handleAcceptOwnership()" class="bg-transparent border border-tealAccent/30 hover:bg-tealAccent/5 text-tealAccent font-bold text-xs px-4 py-2.5 rounded-lg transition-all">
+                  Claim Contract Ownership
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Proxy upgrades -->
+          <div class="bg-slateCard border border-spaceBorder p-6 rounded-2xl shadow-glass space-y-6">
+            <h3 class="text-sm font-bold text-pureWhite border-b border-spaceBorder pb-3">
+              UUPS Proxy Logic Upgrades
+            </h3>
+            <form onsubmit="handleUpgradeTrigger(event)" class="space-y-4">
+              <div>
+                <label class="block text-[10px] font-bold text-mutedGray uppercase tracking-wide mb-1.5">New Logic Implementation Contract Address</label>
+                <input id="upgradeAddress" type="text" placeholder="T..." class="w-full bg-obsidian border border-spaceBorder focus:border-tealAccent/45 focus:ring-1 focus:ring-tealAccent/20 outline-none text-xs px-4 py-3 rounded-lg text-pureWhite transition-all font-mono">
+              </div>
+              <button type="submit" class="bg-crimsonRed hover:bg-red-600 text-pureWhite font-bold text-xs px-4 py-2.5 rounded-lg shadow-red-glow transition-all">
+                Trigger Implementation Upgrade
+              </button>
+            </form>
+
+            <div class="bg-obsidian border border-spaceBorder p-4 rounded-xl text-[10px] text-mutedGray/80 leading-relaxed space-y-2">
+              <p class="font-bold text-pureWhite uppercase">⚠️ Critical UUPS Storage Warning</p>
+              <p>
+                Upgrading proxies is high-risk. Ensure target logic implementation contracts match the proxy's storage alignment to avoid permanently breaking contract states.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- APPLICATION LOGIC SCRIPTS -->
+  <script>
+    // Constants
+    const CONTRACT_PROXY_ADDRESS = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb";
+
+    // Application State Database
+    let state = {
+      userAddress: null,
+      isConnected: false,
+      isOwner: false,
+      isAdmin: false,
+      trxBalance: '0.00',
+      activeTab: 'overview',
+      pendingOwner: null,
+      transactions: [
+        { txid: "45fb16a7e930baefcd890fe729da4be13cd4fe729da4be13cd4fe729da4be13c", timestamp: "2026-06-11 22:15:30", from: "TNU1s6m2o9Muxa3xW5M6D7N2oP4yT8Q5R6", to: "TJB1f8m5y9Puxa5xW8M5D9N6oP4yT7Q4R2", amount: "5,000.00", status: "Success" },
+        { txid: "72a89fecc628f8ac294d1fe2da98cb36294d5098fecc846109fe1c7f42d9ec89", timestamp: "2026-06-11 21:05:12", from: "TJB1f8m5y9Puxa5xW8M5D9N6oP4yT7Q4R2", to: "TNU1s6m2o9Muxa3xW5M6D7N2oP4yT8Q5R6", amount: "150.00", status: "Success" },
+        { txid: "b2f63cd8fe290a188f6c4be09f7a9ec89da7f609e3cd29ff10d65ffbc4123ae42", timestamp: "2026-06-11 20:45:55", from: "TNU1s6m2o9Muxa3xW5M6D7N2oP4yT8Q5R6", to: "TKA3m8p9z4Ruxa5xW8M6D7N5oP3yT9Q2R4", amount: "1,200.00", status: "Failed" }
+      ],
+      registry: [
+        { wallet: "TNU1s6m2o9Muxa3xW5M6D7N2oP4yT8Q5R6", identityHash: "45fca9b19b62fbca8e937d50fc3108c9fe729d7fa028fc729feccb842918e3c1", registrationTime: "2026-06-11 18:22:04" },
+        { wallet: "TJB1f8m5y9Puxa5xW8M5D9N6oP4yT7Q4R2", identityHash: "b2f63cd8fe290a188f6c4be09f7a9ec89da7f609e3cd29ff10d65ffbc4123ae4", registrationTime: "2026-06-11 19:30:18" }
+      ]
+    };
+
+    // Centralized Initialization try-catch protection
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        console.log("Initializing Dashboard application...");
+        initTronWeb();
+        renderLedgerTable();
+        renderRegistryTable();
+      } catch (err) {
+        console.error("Critical DOMContentLoaded initialization error:", err);
+        showCriticalError("Failed to initialize dashboard scripts: " + err.message);
+      }
+    });
+
+    /**
+     * Safely wraps the TronWeb logic inside a try-catch to prevent blank crashes
+     */
+    async function initTronWeb() {
+      try {
+        // Clear any previous warnings
+        hideWarning();
+
+        // Check window.tronWeb is injected and accessible
+        if (typeof window !== 'undefined' && (window.tronWeb || window.tronLink)) {
+          console.log("TronWeb extension environment found.");
+          
+          if (window.tronWeb && window.tronWeb.ready) {
+            const addr = window.tronWeb.defaultAddress.base58;
+            if (addr) {
+              state.userAddress = addr;
+              state.isConnected = true;
+              await fetchBalancesAndRoles();
+            } else {
+              showWarningMessage("TronLink detected, but lock/authorization status is pending. Click 'Connect Wallet' to login.");
+            }
+          } else {
+            // Extension is present but ready flag is false
+            showWarningMessage("TronLink detected. Please open the extension, log in, and connect to Shasta node.");
+          }
+        } else {
+          showWarningMessage("TronLink wallet extension not found. Using offline dashboard specs. Install TronLink for full feature interaction.");
+        }
+      } catch (error) {
+        console.error("Recovered from TronWeb initialization error:", error);
+        showWarningMessage("TronWeb hook integration error: " + error.message + ". App is running in offline safety mode.");
+      }
+      
+      updateWalletUI();
+    }
+
+    /**
+     * Retrieves actual data via contract view calls (wrapped inside try-catch)
+     */
+    async function fetchBalancesAndRoles() {
+      if (!window.tronWeb || !state.userAddress) return;
+      
+      try {
+        // Fetch TRX Balance
+        const balanceSun = await window.tronWeb.trx.getBalance(state.userAddress);
+        state.trxBalance = (balanceSun / 1_000_000).toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+        // Connect to smart contract
+        const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+        
+        // Execute queries safely using Promise.all
+        const [ownerAddress, isRegistryAdmin] = await Promise.all([
+          contract.owner().call().catch(() => null),
+          contract.isRegistryAdmin(state.userAddress).call().catch(() => false)
+        ]);
+
+        state.isOwner = (ownerAddress === state.userAddress);
+        state.isAdmin = (state.isOwner || isRegistryAdmin === true);
+
+        // Fetch pending owner if settings needs it
+        const pending = await contract.pendingOwner().call().catch(() => null);
+        if (pending && pending !== "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb" && pending !== "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb") {
+          state.pendingOwner = pending;
+        } else {
+          state.pendingOwner = null;
+        }
+
+        // Fetch Network Endpoint Hostname
+        const host = window.tronWeb.fullNode.host || "";
+        const rpcText = document.getElementById("rpcDisplay");
+        if (host.includes("shasta")) {
+          rpcText.innerText = "RPC: Shasta Testnet";
+        } else if (host.includes("trongrid")) {
+          rpcText.innerText = "RPC: TRON Mainnet";
+        } else {
+          rpcText.innerText = "RPC: Custom Node";
+        }
+      } catch (err) {
+        console.warn("Could not query live smart contract states. Using mockup defaults:", err.message);
+        // Fallback mockup privileges to avoid blocking testing mock interface
+        state.isOwner = true;
+        state.isAdmin = true;
+      }
+      
+      updateGatedViews();
+    }
+
+    /**
+     * Wallet Connection Trigger method
+     */
+    async function connectWallet() {
+      try {
+        if (!window.tronLink) {
+          throw new Error("TronLink wallet extension is not installed. Please download it from tronlink.org.");
+        }
+        
+        const res = await window.tronLink.request({ method: 'tron_requestAccounts' });
+        if (res && res.code === 200) {
+          const addr = window.tronWeb.defaultAddress.base58;
+          if (addr) {
+            state.userAddress = addr;
+            state.isConnected = true;
+            await fetchBalancesAndRoles();
+            triggerToast("Wallet Connected", `Successfully linked: ${addr.slice(0, 8)}...`);
+          }
+        } else {
+          throw new Error("User cancelled or rejected connection request.");
+        }
+      } catch (err) {
+        showErrorMessage(err.message);
+      }
+      updateWalletUI();
+    }
+
+    /**
+     * Gated UI updates depending on role status
+     */
+    function updateGatedViews() {
+      const registryLock = document.getElementById("registryLockOverlay");
+      const settingsLock = document.getElementById("settingsLockOverlay");
+      
+      // Control Registry Lock
+      if (state.isAdmin) {
+        registryLock.classList.add("hidden");
+      } else {
+        registryLock.classList.remove("hidden");
+      }
+
+      // Control Settings Logic Lock
+      if (state.isOwner) {
+        settingsLock.classList.add("hidden");
+      } else {
+        settingsLock.classList.remove("hidden");
+      }
+
+      // Update registry count mockup UI
+      document.getElementById("registryCount").innerText = `${state.registry.length} Wallets`;
+
+      // Update pending ownership UI
+      const pendingOwnerDiv = document.getElementById("pendingOwnerDiv");
+      const pendingOwnerText = document.getElementById("pendingOwnerText");
+      const claimArea = document.getElementById("claimButtonArea");
+
+      if (state.pendingOwner) {
+        pendingOwnerDiv.classList.remove("hidden");
+        pendingOwnerText.innerText = state.pendingOwner;
+        if (state.userAddress === state.pendingOwner) {
+          claimArea.classList.remove("hidden");
+        } else {
+          claimArea.classList.add("hidden");
+        }
+      } else {
+        pendingOwnerDiv.classList.add("hidden");
+      }
+    }
+
+    /**
+     * Top Navbar wallet info UI toggle
+     */
+    function updateWalletUI() {
+      const wrapper = document.getElementById("walletWrapper");
+      if (state.isConnected && state.userAddress) {
+        wrapper.innerHTML = `
+          <div class="flex items-center gap-3 bg-slateCard border border-spaceBorder px-4 py-2 rounded-xl">
+            <div class="text-right">
+              <p class="text-[10px] text-pureWhite font-mono font-bold leading-none">
+                ${state.userAddress.slice(0, 6)}...${state.userAddress.slice(-6)}
+              </p>
+              <p class="text-[9px] text-tealAccent font-mono mt-1 leading-none font-medium">
+                ${state.trxBalance} TRX
+              </p>
+            </div>
+            <div class="w-2 h-2 rounded-full bg-tealAccent animate-pulse shadow-teal-glow"></div>
+          </div>
+        `;
+      } else {
+        wrapper.innerHTML = `
+          <button onclick="connectWallet()" id="connectWalletBtn" class="bg-tealAccent hover:bg-[#00d1b5] active:scale-95 text-obsidian font-bold text-xs px-5 py-2.5 rounded-xl shadow-teal-glow transition-all">
+            Connect Wallet
+          </button>
+        `;
+      }
+    }
+
+    /**
+     * Tab Routing implementation
+     */
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      
+      const navIds = ['overview', 'transfers', 'registry', 'settings'];
+      
+      // Update sidebar styling class triggers
+      navIds.forEach(id => {
+        const btn = document.getElementById(`nav-${id}`);
+        const content = document.getElementById(`tabContent-${id}`);
+        
+        if (id === tabId) {
+          btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold text-tealAccent bg-tealAccent/10 border border-tealAccent/15 transition-all text-left";
+          content.classList.remove("hidden");
+        } else {
+          btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold text-mutedGray hover:bg-spaceBorder/5 hover:text-pureWhite transition-all text-left";
+          content.classList.add("hidden");
+        }
+      });
+
+      // Update header banner title
+      const titles = {
+        overview: "Overview Panel",
+        transfers: "Historical Transactions Ledger",
+        registry: "Registered Identities Directory",
+        settings: "Settings & Logic Upgrades"
+      };
+      document.getElementById("headerTitle").innerText = titles[tabId] || "Dashboard";
+      
+      // Refresh Gated State Checks
+      updateGatedViews();
+    }
+
+    // --- TRANSFERS ACTIONS ---
+    async function handleTransfer(e) {
+      e.preventDefault();
+      hideError();
+
+      const recipient = document.getElementById("transferRecipient").value.trim();
+      const amount = document.getElementById("transferAmount").value.trim();
+
+      if (!state.isConnected) {
+        showErrorMessage("Please connect your TronLink wallet to execute token transfers.");
+        return;
+      }
+
+      if (!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(recipient)) {
+        showErrorMessage("Invalid TRON address format (must start with T and be 34 characters).");
+        return;
+      }
+
+      if (!amount || parseFloat(amount) <= 0) {
+        showErrorMessage("Amount must be greater than zero.");
+        return;
+      }
+
+      const btn = document.getElementById("btnSubmitTransfer");
+      btn.innerText = "Broadcasting...";
+      btn.disabled = true;
+
+      try {
+        // Attempt contract call if injected
+        let txid = "mock_" + Math.random().toString(16).slice(2, 18);
+        
+        if (window.tronWeb && window.tronWeb.ready) {
+          const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+          const decimals = 6;
+          const tokenUnits = (parseFloat(amount) * Math.pow(10, decimals)).toString();
+          
+          txid = await contract.transfer(recipient, tokenUnits).send({
+            feeLimit: 100000000
+          });
+        }
+
+        // Add to historical ledger
+        const newRecord = {
+          txid: txid,
+          timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+          from: state.userAddress || "TNU1s6m2o9Muxa3xW5M6D7N2oP4yT8Q5R6",
+          to: recipient,
+          amount: parseFloat(amount).toLocaleString(undefined, { minimumFractionDigits: 2 }),
+          status: "Success"
+        };
+
+        state.transactions.unshift(newRecord);
+        renderLedgerTable();
+        document.getElementById("transferRecipient").value = "";
+        document.getElementById("transferAmount").value = "";
+        
+        triggerToast("Transfer Submitted", `Transaction Broadcasted! TxID: ${txid.slice(0,10)}...`);
+      } catch (err) {
+        console.error(err);
+        showErrorMessage(err.message || "Smart contract transaction reverted.");
+      } finally {
+        btn.innerText = "Broadcast Transfer";
+        btn.disabled = false;
+      }
+    }
+
+    function renderLedgerTable() {
+      const tbody = document.getElementById("txTableBody");
+      const search = document.getElementById("txSearch").value.toLowerCase();
+      tbody.innerHTML = "";
+
+      const filtered = state.transactions.filter(t => 
+        t.txid.toLowerCase().includes(search) ||
+        t.from.toLowerCase().includes(search) ||
+        t.to.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colSpan="5" class="py-8 text-center text-mutedGray/50 font-sans text-xs">
+              No historical transactions match filter criteria.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(tx => {
+        const row = document.createElement("tr");
+        row.className = "border-b border-spaceBorder hover:bg-spaceBorder/5";
+        row.innerHTML = `
+          <td class="py-3 px-2 text-tealAccent font-semibold">
+            <span title="${tx.txid}">${tx.txid.slice(0, 8)}...</span>
+          </td>
+          <td class="py-3 px-2 text-[10px] text-mutedGray/70 font-sans">${tx.timestamp}</td>
+          <td class="py-3 px-2 font-mono">
+            <span title="${tx.to}">${tx.to.slice(0, 6)}...${tx.to.slice(-4)}</span>
+          </td>
+          <td class="py-3 px-2 text-right font-bold text-pureWhite font-mono">${tx.amount}</td>
+          <td class="py-3 px-2 text-center font-sans">
+            <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded border ${
+              tx.status === 'Success' 
+                ? 'bg-tealAccent/10 text-tealAccent border-tealAccent/20' 
+                : 'bg-crimsonRed/10 text-crimsonRed border-crimsonRed/20'
+            }">${tx.status}</span>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function filterTransactions() {
+      renderLedgerTable();
+    }
+
+    // --- REGISTRY ACTIONS ---
+    async function handleRegister(e) {
+      e.preventDefault();
+      hideError();
+
+      const addr = document.getElementById("registryAddress").value.trim();
+      const hash = document.getElementById("registryHash").value.trim();
+
+      if (!state.isConnected || !state.isAdmin) {
+        showErrorMessage("Admin credentials required to register identities.");
+        return;
+      }
+
+      if (!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(addr)) {
+        showErrorMessage("Invalid registration target wallet address.");
+        return;
+      }
+
+      if (!/^[0-9a-fA-F]{64}$/.test(hash)) {
+        showErrorMessage("Identity Hash must be a valid 64-character hex signature.");
+        return;
+      }
+
+      try {
+        let txid = "mock_" + Math.random().toString(16).slice(2, 18);
+        if (window.tronWeb && window.tronWeb.ready) {
+          const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+          txid = await contract.registerWallet(addr, hash).send({
+            feeLimit: 150000000
+          });
+        }
+
+        const record = {
+          wallet: addr,
+          identityHash: hash,
+          registrationTime: new Date().toISOString().replace('T', ' ').slice(0, 19)
+        };
+
+        state.registry.push(record);
+        renderRegistryTable();
+        document.getElementById("registryAddress").value = "";
+        document.getElementById("registryHash").value = "";
+        triggerToast("Identity Registered", `Address profile active! TxID: ${txid.slice(0, 10)}...`);
+      } catch (err) {
+        console.error(err);
+        showErrorMessage(err.message || "Registration contract execution failed.");
+      }
+    }
+
+    async function handleRevoke(walletAddress) {
+      if (!window.confirm(`Revoke registration validation details for ${walletAddress}?`)) {
+        return;
+      }
+
+      try {
+        let txid = "mock_" + Math.random().toString(16).slice(2, 18);
+        if (window.tronWeb && window.tronWeb.ready) {
+          const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+          txid = await contract.revoke(walletAddress).send({
+            feeLimit: 100000000
+          });
+        }
+
+        state.registry = state.registry.filter(r => r.wallet !== walletAddress);
+        renderRegistryTable();
+        triggerToast("Identity Revoked", `Identity removed from register state.`);
+      } catch (err) {
+        showErrorMessage(err.message || "Failed to broadcast revoke transaction.");
+      }
+    }
+
+    function renderRegistryTable() {
+      const tbody = document.getElementById("registryTableBody");
+      tbody.innerHTML = "";
+
+      if (state.registry.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colSpan="4" class="py-8 text-center text-mutedGray/50 font-sans text-xs">
+              No registered profiles found in storage registers.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      state.registry.forEach(item => {
+        const row = document.createElement("tr");
+        row.className = "border-b border-spaceBorder hover:bg-spaceBorder/5";
+        row.innerHTML = `
+          <td class="py-3 px-2 text-pureWhite font-bold">
+            <span title="${item.wallet}">${item.wallet.slice(0, 6)}...${item.wallet.slice(-6)}</span>
+          </td>
+          <td class="py-3 px-2 text-[10px] text-mutedGray/70">
+            <span title="${item.identityHash}">${item.identityHash.slice(0, 12)}...</span>
+          </td>
+          <td class="py-3 px-2 text-[10px] font-sans text-mutedGray/50">${item.registrationTime}</td>
+          <td class="py-3 px-2 text-center font-sans">
+            <button onclick="handleRevoke('${item.wallet}')" ${state.isAdmin ? '' : 'disabled'} class="bg-crimsonRed text-pureWhite text-[9px] font-extrabold px-3 py-1 rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed">
+              Revoke
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // --- SETTINGS ACTIONS ---
+    async function handleProposeOwner(e) {
+      e.preventDefault();
+      hideError();
+      
+      const newOwner = document.getElementById("proposeOwnerAddress").value.trim();
+      
+      if (!state.isOwner) {
+        showErrorMessage("Only the contract owner can transfer ownership credentials.");
+        return;
+      }
+
+      if (!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(newOwner)) {
+        showErrorMessage("Invalid target owner address format.");
+        return;
+      }
+
+      try {
+        let txid = "mock_" + Math.random().toString(16).slice(2, 18);
+        if (window.tronWeb && window.tronWeb.ready) {
+          const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+          txid = await contract.transferOwnership(newOwner).send({
+            feeLimit: 100000000
+          });
+        }
+
+        state.pendingOwner = newOwner;
+        document.getElementById("proposeOwnerAddress").value = "";
+        updateGatedViews();
+        triggerToast("Ownership Proposed", `Pending proposed claimant address: ${newOwner}`);
+      } catch (err) {
+        showErrorMessage(err.message || "Failed to propose ownership delegation.");
+      }
+    }
+
+    async function handleAcceptOwnership() {
+      try {
+        let txid = "mock_" + Math.random().toString(16).slice(2, 18);
+        if (window.tronWeb && window.tronWeb.ready) {
+          const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+          txid = await contract.acceptOwnership().send({
+            feeLimit: 100000000
+          });
+        }
+
+        state.isOwner = true;
+        state.pendingOwner = null;
+        updateGatedViews();
+        triggerToast("Ownership Accepted", `You are now the master owner custodian.`);
+      } catch (err) {
+        showErrorMessage(err.message || "Delegation accept transaction failed.");
+      }
+    }
+
+    async function handleUpgradeTrigger(e) {
+      e.preventDefault();
+      hideError();
+
+      const newImpl = document.getElementById("upgradeAddress").value.trim();
+
+      if (!state.isOwner) {
+        showErrorMessage("Owner authorization credentials needed to execute upgrades.");
+        return;
+      }
+
+      if (!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(newImpl)) {
+        showErrorMessage("Invalid logic address format mapping.");
+        return;
+      }
+
+      if (!window.confirm(`Critical Warning: You are about to upgrade the logic contract. Are you sure?`)) {
+        return;
+      }
+
+      try {
+        let txid = "mock_" + Math.random().toString(16).slice(2, 18);
+        if (window.tronWeb && window.tronWeb.ready) {
+          const contract = await window.tronWeb.contract().at(CONTRACT_PROXY_ADDRESS);
+          txid = await contract.upgradeTo(newImpl).send({
+            feeLimit: 150000000
+          });
+        }
+
+        document.getElementById("upgradeAddress").value = "";
+        triggerToast("Proxy Upgraded", `New implementation active at: ${newImpl}`);
+      } catch (err) {
+        showErrorMessage(err.message || "Upgrade logic broadcast failed.");
+      }
+    }
+
+    // --- UTILITIES UI ALERTS ---
+    function showWarningMessage(msg) {
+      const banner = document.getElementById("warningBanner");
+      const text = document.getElementById("warningText");
+      if (banner && text) {
+        banner.classList.remove("hidden");
+        text.innerText = msg;
+      }
+    }
+
+    function hideWarning() {
+      const banner = document.getElementById("warningBanner");
+      if (banner) banner.classList.add("hidden");
+    }
+
+    function showErrorMessage(msg) {
+      const banner = document.getElementById("errorBanner");
+      const text = document.getElementById("errorText");
+      if (banner && text) {
+        banner.classList.remove("hidden");
+        text.innerText = msg;
+      }
+    }
+
+    function showCriticalError(msg) {
+      // In case of a major crash, display error directly in body to avoid white screens
+      document.body.innerHTML = `
+        <div class="min-h-screen bg-obsidian flex flex-col items-center justify-center p-8 text-center text-pureWhite font-sans">
+          <span class="text-4xl">❌</span>
+          <h2 class="text-lg font-black text-crimsonRed uppercase tracking-wider mt-4">Dashboard Crash Prevented</h2>
+          <p class="text-xs text-mutedGray max-w-md mt-2 leading-relaxed bg-slateCard p-4 rounded-xl border border-spaceBorder font-mono break-all">${msg}</p>
+          <button onclick="window.location.reload()" class="mt-6 bg-tealAccent text-obsidian font-bold text-xs px-5 py-2.5 rounded-xl">Reload System</button>
+        </div>
+      `;
+    }
+
+    function hideError() {
+      const banner = document.getElementById("errorBanner");
+      if (banner) banner.classList.add("hidden");
+    }
+
+    function triggerToast(title, body) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "bg-slateCard border border-tealAccent/20 p-4 rounded-xl shadow-glass flex items-center gap-3 w-80 pointer-events-auto transform translate-y-10 opacity-0 transition-all duration-300";
+      toast.innerHTML = `
+        <div class="w-2 h-2 rounded-full bg-tealAccent shadow-teal-glow shrink-0 animate-pulse"></div>
+        <div class="flex-1">
+          <p class="text-xs font-bold text-pureWhite leading-none">${title}</p>
+          <p class="text-[9px] text-mutedGray mt-1.5 font-mono">${body}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-mutedGray hover:text-pureWhite text-xs px-1">✕</button>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 50);
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
