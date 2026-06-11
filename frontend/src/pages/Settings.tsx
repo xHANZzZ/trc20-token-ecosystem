@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '../components/Button.js';
-import { Input } from '../components/Input.js';
-import { Modal } from '../components/Modal.js';
-import { useTronLink } from '../hooks/useTronLink.js';
+import { Button } from '../components/Button';
+import { Input } from '../components/Input';
+import { Modal } from '../components/Modal';
+import { useTronLink } from '../hooks/useTronLink';
 
 export const Settings: React.FC = () => {
   const { isConnected, isOwner, address } = useTronLink();
